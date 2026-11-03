@@ -1,0 +1,130 @@
+/* 편집기: 위 도구줄, 왼쪽 블록·레이어, 가운데 캔버스, 오른쪽 속성 */
+.ub-editor {
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 300px;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas: "bar bar bar" "alert alert alert" "left canvas right";
+  overflow: hidden;
+}
+.ub-toolbar { grid-area: bar; display: flex; align-items: center; gap: 12px; padding: 8px 12px; background: var(--surface); border-bottom: 1px solid var(--line); min-width: 0; }
+.ub-toolbar__name { font-size: 15px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ub-toolbar__save { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.ub-toolbar__save[data-error] { color: var(--danger); font-weight: 600; }
+.ub-toolbar__group { display: flex; align-items: center; gap: 2px; padding-left: 10px; border-left: 1px solid var(--line); }
+.ub-toolbar__mode { margin-left: 8px; }
+.ub-toolbar__end { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.ub-editor > .ub-alert { grid-area: alert; }
+
+.ub-menu { position: relative; }
+.ub-menu > summary { list-style: none; }
+.ub-menu > summary::-webkit-details-marker { display: none; }
+.ub-menu__list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; min-width: 220px; padding: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); display: grid; }
+.ub-menu__list button { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; border: 0; border-radius: 6px; background: none; text-align: left; cursor: pointer; font-size: 13px; }
+.ub-menu__list button:hover:not(:disabled) { background: var(--accent-soft); }
+
+.ub-share { position: fixed; z-index: 40; top: 56px; right: 12px; width: min(460px, calc(100vw - 24px)); padding: 16px 44px 16px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); display: grid; gap: 10px; }
+.ub-share p { margin: 0; font-size: 13px; }
+.ub-share__row { display: flex; gap: 8px; }
+.ub-share__row input { flex: 1; min-width: 0; border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 6px 8px; background: var(--surface-2); font-size: 12px; }
+.ub-share__close { position: absolute; top: 8px; right: 8px; }
+
+.ub-left, .ub-right { background: var(--surface); display: flex; flex-direction: column; min-height: 0; }
+.ub-left { grid-area: left; border-right: 1px solid var(--line); }
+.ub-right { grid-area: right; border-left: 1px solid var(--line); }
+.ub-tabs { display: flex; border-bottom: 1px solid var(--line); flex: none; }
+.ub-tabs button { flex: 1; height: 40px; border: 0; background: none; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 8px; }
+.ub-tabs button[aria-selected="true"] { color: var(--text); border-color: var(--accent); }
+
+.ub-palette { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.ub-search { display: flex; align-items: center; gap: 6px; margin: 12px 12px 8px; width: auto; padding: 0 8px; height: 34px; color: var(--muted); }
+.ub-search input { flex: 1; min-width: 0; border: 0; outline: none; background: none; color: var(--text); font-size: 13px; }
+.ub-search button { border: 0; background: none; color: var(--muted); cursor: pointer; display: grid; padding: 2px; }
+.ub-search:focus-within { border-color: var(--accent); }
+.ub-chips { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 12px 10px; border-bottom: 1px solid var(--line); }
+.ub-chips button { height: 26px; padding: 0 9px; border-radius: 999px; border: 1px solid var(--line); background: none; font-size: 12px; color: var(--muted); cursor: pointer; }
+.ub-chips button[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: var(--bg); font-weight: 600; }
+.ub-palette__list { list-style: none; margin: 0; padding: 10px 12px 16px; overflow-y: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
+.ub-tile {
+  position: relative; width: 100%; min-height: 64px; padding: 10px 8px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--text); font-size: 12px; text-align: center; cursor: grab; line-height: 1.25;
+}
+.ub-tile:hover { border-color: var(--accent); background: var(--accent-soft); }
+.ub-tile:active { cursor: grabbing; }
+.ub-tile > svg { color: var(--accent-text); }
+.ub-tile__live { position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ub-palette__empty { padding: 24px 16px; text-align: center; display: grid; gap: 10px; justify-items: center; color: var(--muted); }
+.ub-palette__empty p { margin: 0; }
+
+.ub-layers { list-style: none; margin: 0; padding: 8px; overflow-y: auto; display: grid; gap: 2px; align-content: start; }
+.ub-layers li { display: flex; align-items: center; gap: 0; border-radius: 8px; padding-right: 2px; }
+.ub-layers li[data-selected] { background: var(--accent-soft); }
+.ub-layers .ub-iconbtn { width: 26px; height: 26px; }
+.ub-layers__name { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 8px; border: 0; background: none; cursor: pointer; text-align: left; font-size: 13px; }
+.ub-layers__name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ub-layers li[data-hidden] .ub-layers__name span { text-decoration: line-through; color: var(--muted); }
+.ub-layers__name small { margin-left: auto; font-size: 11px; color: var(--muted); }
+.ub-layers__empty { padding: 16px; }
+
+.ub-inspector, .ub-theme { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.ub-inspector h2 { margin: 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.ub-inspector h3 { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+.ub-source { margin: -8px 0 0; font-size: 12px; color: var(--muted); }
+.ub-grid4 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ub-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.ub-actions .ub-btn { height: 30px; padding: 0 9px; font-size: 12px; }
+.ub-actions .ub-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.ub-props { display: flex; flex-direction: column; gap: 12px; padding-top: 14px; border-top: 1px solid var(--line); }
+.ub-swatches { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.ub-swatches button { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line-strong); cursor: pointer; }
+.ub-swatches button[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--text); }
+
+/* 캔버스: 제도판. 점 격자 위에 아트보드가 놓인다. */
+.ub-canvas {
+  grid-area: canvas; position: relative; overflow: auto; padding: 32px;
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.3px);
+  background-size: 16px 16px;
+}
+.ub-canvas__board { position: relative; margin: 0 auto; }
+.ub-canvas__board[data-drop] { outline: 2px dashed var(--accent); outline-offset: 6px; }
+.ub-canvas__board > .ub-art { box-shadow: 0 0 0 1px var(--line-strong), 0 20px 50px -24px rgba(22, 33, 58, 0.35); }
+.ub-canvas__hint { position: sticky; left: 0; bottom: -20px; margin: 16px auto 0; width: fit-content; max-width: 100%; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.ub-canvas__empty { position: absolute; left: 50%; top: 160px; transform: translateX(-50%); padding: 14px 20px; border: 1.5px dashed var(--line-strong); border-radius: 12px; color: var(--muted); font-size: 16px; background: var(--surface); pointer-events: none; }
+
+.ub-editor[data-mode="edit"] .ub-item { cursor: move; }
+.ub-editor[data-mode="edit"] .ub-item[data-locked] { cursor: default; }
+.ub-editor[data-mode="edit"] .ub-item:hover:not([data-selected]) { outline: 1px solid color-mix(in srgb, var(--accent) 60%, transparent); }
+.ub-item[data-selected] { outline: 1px solid var(--accent); }
+
+/* 선택 표시: 도면처럼 치수선과 숫자를 단다(편집기 장식, PNG에서 뺀다). 확대율과 상관없이 같은 크기로 보이게 --z로 나눈다. */
+.ub-sel { position: absolute; pointer-events: none; z-index: 9999; outline: calc(2px / var(--z)) solid var(--accent); }
+.ub-sel[data-locked] { outline-style: dashed; }
+.ub-handle {
+  position: absolute; pointer-events: auto; width: calc(10px / var(--z)); height: calc(10px / var(--z));
+  background: #fff; border: calc(1.5px / var(--z)) solid var(--accent); border-radius: calc(2px / var(--z));
+  transform: translate(-50%, -50%);
+}
+.ub-handle[data-h="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+.ub-handle[data-h="n"] { left: 50%; top: 0; cursor: ns-resize; }
+.ub-handle[data-h="ne"] { left: 100%; top: 0; cursor: nesw-resize; }
+.ub-handle[data-h="e"] { left: 100%; top: 50%; cursor: ew-resize; }
+.ub-handle[data-h="se"] { left: 100%; top: 100%; cursor: nwse-resize; }
+.ub-handle[data-h="s"] { left: 50%; top: 100%; cursor: ns-resize; }
+.ub-handle[data-h="sw"] { left: 0; top: 100%; cursor: nesw-resize; }
+.ub-handle[data-h="w"] { left: 0; top: 50%; cursor: ew-resize; }
+.ub-dim {
+  position: absolute; font: 600 calc(11px / var(--z)) / 1 var(--font); color: var(--accent-text); font-variant-numeric: tabular-nums;
+  background: var(--surface); padding: calc(2px / var(--z)) calc(5px / var(--z)); border-radius: calc(4px / var(--z));
+  box-shadow: 0 0 0 calc(1px / var(--z)) var(--accent);
+}
+.ub-dim--w { left: 50%; top: calc(-24px / var(--z)); transform: translateX(-50%); }
+.ub-dim--h { top: 50%; left: calc(-12px / var(--z)); transform: translate(-100%, -50%); }
+.ub-guide { position: absolute; z-index: 9998; pointer-events: none; background: #e5484d; }
+.ub-guide[data-axis="x"] { top: 0; bottom: 0; width: 1px; }
+.ub-guide[data-axis="y"] { left: 0; right: 0; height: 1px; }
+
+@media (max-width: 1200px) {
+  .ub-editor { grid-template-columns: 220px minmax(0, 1fr) 270px; }
+  .ub-toolbar__save { display: none; }
+}

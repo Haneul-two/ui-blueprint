@@ -1,0 +1,57 @@
+/* 편집기 겉모습 토큰. 컨셉: 청사진(차가운 제도 용지, 점 격자, 코발트 강조 하나). */
+:root {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --surface-2: #f6f8fb;
+  --text: #16213a;
+  --muted: #4f5b70;
+  --line: #d3dae4;
+  --line-strong: #b6c0ce;
+  --accent: #1f4fd1;
+  --accent-text: #1a43b3;
+  --accent-soft: rgba(31, 79, 209, 0.1);
+  --on-accent: #ffffff;
+  --danger: #b42318;
+  --dot: #c3ccd9;
+  --shadow: 0 1px 2px rgba(22, 33, 58, 0.06), 0 6px 20px -8px rgba(22, 33, 58, 0.18);
+  --font: Pretendard, "Pretendard Variable", system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+  --radius: 8px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10141c;
+    --surface: #181e29;
+    --surface-2: #1d2431;
+    --text: #e6eaf2;
+    --muted: #a0abbd;
+    --line: #2a3342;
+    --line-strong: #3a4558;
+    --accent: #8aa8ff;
+    --accent-text: #9db6ff;
+    --accent-soft: rgba(138, 168, 255, 0.14);
+    --on-accent: #0d1430;
+    --danger: #ff8a80;
+    --dot: #2c3647;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10141c;
+  --surface: #181e29;
+  --surface-2: #1d2431;
+  --text: #e6eaf2;
+  --muted: #a0abbd;
+  --line: #2a3342;
+  --line-strong: #3a4558;
+  --accent: #8aa8ff;
+  --accent-text: #9db6ff;
+  --accent-soft: rgba(138, 168, 255, 0.14);
+  --on-accent: #0d1430;
+  --danger: #ff8a80;
+  --dot: #2c3647;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}

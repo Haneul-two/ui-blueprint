@@ -1,0 +1,31 @@
+# UI 설계도 (ui-blueprint)
+
+블록 48개를 골라 아트보드에 놓으며 대시보드·웹사이트·앱 화면을 설계하는 공개용 정적 웹 도구. 사양은 `docs/spec.md`, 경과는 `docs/HISTORY.md`.
+
+## 현재 상태 (2026-11-03)
+- 하위 프로젝트 3개(블록 라이브러리, 배치 편집기, 저장·공유·내보내기) 1차 완성. 로컬 검증만 했고 배포는 안 함(승인 대기).
+- 단위 테스트 180개, e2e 40개 통과. Codex 교차 리뷰 2회 반영.
+- 알려진 한계: 속성 패널 입력 직후 400ms 안에 탭을 닫으면 그 입력은 저장 안 됨(docs/HISTORY.md).
+
+## 실행
+- `npm install` → `npm run dev` (개발) / `npm run build` → `npm run preview` (포트 5190)
+- 검사: `npm run typecheck`, `npm test`, `npm run build && npm run e2e`, `npm run check:public`
+- 화면 캡처: `node scripts/shoot.mjs "#/blocks" 이름 [폭 높이] [dark|full]`, 분류별 `node scripts/shoot-sections.mjs [dark]`. 결과는 `shots/`(git 제외)
+- 고정 설계로 바로 열기: `#/edit/<아무 id>?fixture=dashboard|landing|app|all-blocks`
+
+## 구조
+- `src/config.ts` 숫자 설정 전부(CONFIG)
+- `src/blocks/` 블록 정의. 새 블록 = 분류 파일에 `BlockDef` 하나 추가하면 목록·속성 패널·AI 사양서·테스트가 따라온다
+- `src/editor/` 편집기(Canvas 끌기·크기, snapping 순수 함수, ops 순수 편집 함수, Inspector·Layers·Palette·ThemePanel)
+- `src/model/` 설계 타입·기록(실행 취소)·검사기·저장
+- `src/io/` 공유 링크(deflate-raw + base64url), JSON 파일, PNG(html-to-image), AI 사양서
+- `src/vendor/stageshow/` stageshow 키트 사본(MIT). 브랜드 자산은 뺐다(`NOTICE.md`)
+
+## 규칙 (이유와 함께)
+- Git Bash에서 `#/`로 시작하는 인자를 스크립트에 넘길 때는 `MSYS_NO_PATHCONV=1`을 둔다. 안 그러면 `#C:/Program Files/Git/...`로 바뀌어 엉뚱한 화면을 검사한다.
+- 리듀서(`historyReducer`) 안에서 id를 만들지 않는다. 리듀서는 렌더 때 돌아 dispatch 직후 그 id를 읽을 수 없다. id는 dispatch 전에 `uid()`로 만들어 넘긴다.
+- 블록 크기·최소 크기는 8의 배수로 둔다. 테스트가 강제한다. 아니면 끌어 놓은 좌표가 격자에서 벗어난다.
+- 키트 CSS는 `@layer stageshow` 안에 있고 이 사이트 CSS는 레이어 밖이라 항상 이긴다. 키트 토큰을 덮을 때 라이트 전용 값은 `.ub-art:not([data-theme="dark"])`에 둔다. 안 그러면 다크 값까지 덮인다.
+- 키트 아바타 이니셜·상태 글자색은 대비가 모자라 `blocks.css`에서 덮었다. 키트 사본은 고치지 않는다.
+- 레퍼런스 사이트의 코드·이미지는 넣지 않는다. 구조와 기법만 참고한다. 실존 브랜드 흉내 블록 금지(사용자 요청).
+- 공개물에 절대 경로·회사명 금지. 금지어 목록은 `scripts/forbidden.local.txt`(git 제외).
