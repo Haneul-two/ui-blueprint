@@ -2,8 +2,9 @@ import { getBlock } from '../blocks/registry'
 import { readingOrder } from '../model/design'
 import type { Design, PropValue } from '../model/types'
 import { CONFIG } from '../config'
+import { fontOf } from '../app/fonts'
 
-const FONT_LABEL = { sans: '고딕(산세리프)', serif: '명조(세리프)', mono: '고정폭' }
+const PATTERN_LABEL = { none: '없음', dots: '점', grid: '격자', glow: '강조색 은은한 빛' }
 const DENSITY_LABEL = { compact: '촘촘하게', normal: '보통', roomy: '여유 있게' }
 
 function fmt(v: PropValue): string {
@@ -19,7 +20,10 @@ export function buildAiSpec(d: Design): string {
   out.push(`# ${d.name}`, '')
   out.push('## 화면', '')
   out.push(`- 아트보드: ${CONFIG.artboards[d.artboard.kind].label} ${d.artboard.w}×${d.artboard.h}px`)
-  out.push(`- 테마: ${t.mode === 'dark' ? '어두운' : '밝은'} 화면, 강조색 ${t.accent}, 모서리 ${t.radius}px, 글꼴 ${FONT_LABEL[t.font]}, 간격 ${DENSITY_LABEL[t.density]}`)
+  const f = fontOf(t.font)
+  out.push(`- 테마: ${t.mode === 'dark' ? '어두운' : '밝은'} 화면, 강조색 ${t.accent}, 모서리 ${t.radius}px, 글꼴 ${f.label}(${f.group}, CSS: ${f.face}), 간격 ${DENSITY_LABEL[t.density]}`)
+  if (t.canvas || t.surface || (t.pattern && t.pattern !== 'none'))
+    out.push(`- 배경: ${[t.canvas && `바탕색 ${t.canvas}`, t.surface && `카드 면 색 ${t.surface}`, t.pattern && t.pattern !== 'none' && `무늬 ${PATTERN_LABEL[t.pattern]}`].filter(Boolean).join(', ')}`)
   out.push(`- 블록 ${d.items.filter((i) => !i.hidden).length}개 (위→아래, 왼→오 순서)`, '')
   out.push('## 블록', '')
   let n = 0

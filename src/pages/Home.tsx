@@ -8,6 +8,7 @@ import { pickJsonFile } from '../io/file'
 import { PRESETS } from '../presets'
 import { go } from '../app/router'
 import { Icon } from '../ui/Icon'
+import { radioKeys } from '../ui/radioKeys'
 import { Toaster, useToasts } from '../ui/toast'
 import type { Design } from '../model/types'
 import { HomeHero } from './HomeHero'
@@ -65,7 +66,7 @@ export function Home() {
           <div className="ub-start">
             <div className="ub-start__blank">
               <strong>빈 설계</strong>
-              <div className="ub-kinds" role="radiogroup" aria-label="아트보드 종류">
+              <div className="ub-kinds" role="radiogroup" onKeyDown={radioKeys} aria-label="아트보드 종류">
                 {(Object.keys(CONFIG.artboards) as ArtboardKind[]).map((k) => (
                   <button key={k} type="button" role="radio" aria-checked={kind === k} onClick={() => setKind(k)}>
                     <Icon name={KIND_ICON[k]} size={18} />

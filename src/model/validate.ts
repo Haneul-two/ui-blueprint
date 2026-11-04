@@ -1,5 +1,6 @@
 import { CONFIG } from '../config'
 import { DEFAULT_THEME } from './design'
+import { isFontId } from '../app/fonts'
 import type { Design, Item, Props, PropValue } from './types'
 
 export type ValidateResult =
@@ -68,9 +69,14 @@ export function validateDesign(input: unknown, knownTypes: Set<string>): Validat
     mode: t.mode === 'dark' ? 'dark' : 'light',
     accent: typeof t.accent === 'string' && HEX.test(t.accent) ? t.accent : DEFAULT_THEME.accent,
     radius: isNum(t.radius, 0, 32) ? t.radius : DEFAULT_THEME.radius,
-    font: t.font === 'serif' || t.font === 'mono' ? t.font : 'sans',
+    font: isFontId(t.font) ? t.font : 'sans',
     density: t.density === 'compact' || t.density === 'roomy' ? t.density : 'normal',
+    canvas: typeof t.canvas === 'string' && HEX.test(t.canvas) ? t.canvas : undefined,
+    surface: typeof t.surface === 'string' && HEX.test(t.surface) ? t.surface : undefined,
+    pattern: t.pattern === 'dots' || t.pattern === 'grid' || t.pattern === 'glow' ? t.pattern : undefined,
   } as Design['theme']
+  // 비어 있는 선택 값은 키째 뺀다(저장 파일을 깔끔하게, 예전 설계와 같은 모양으로).
+  for (const k of ['canvas', 'surface', 'pattern'] as const) if (theme[k] === undefined) delete theme[k]
 
   const name = typeof input.name === 'string' ? input.name.slice(0, CONFIG.limits.name) : '불러온 설계'
   const design: Design = {

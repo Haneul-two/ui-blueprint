@@ -348,6 +348,31 @@ try {
   }
   await page.emulateMedia({ colorScheme: 'light' })
 
+  // 내보내기 메뉴는 항목을 고르면 닫힌다(열려 있으면 오른쪽 패널 탭을 가린다)
+  check((await page.locator('.ub-menu[open]').count()) === 0, '내보내기 항목을 고르면 메뉴가 닫힘')
+
+  // 테마 조절판: 글꼴 12종 타일·바탕색 견본(대비·이름), 글꼴을 바꾸면 아트보드에 반영
+  await page.locator('.ub-right [role="tab"]', { hasText: '테마' }).click()
+  await page.locator('.ub-fonts [role="radio"]', { hasText: '고운바탕' }).click()
+  await page.getByRole('button', { name: '바탕색 #eef4ff' }).click()
+  await page.waitForTimeout(400)
+  const themed = await page.$eval('.ub-canvas .ub-art', (e) => ({ font: getComputedStyle(e).fontFamily, bg: getComputedStyle(e).backgroundColor }))
+  const fontTiles = await page.locator('.ub-fonts [role="radio"]').count()
+  const rTheme = await page.evaluate(CONTRAST_FN)
+  const missTheme = await page.evaluate(NAMES_FN)
+  check(fontTiles === 12 && themed.font.includes('Gowun Batang') && themed.bg === 'rgb(238, 244, 255)' && rTheme.bad.length === 0 && missTheme.length === 0, '테마 글꼴·바탕색 적용, 조절판 대비·이름', `글꼴 ${fontTiles}종, ${themed.font.slice(0, 20)}, ${themed.bg}, 대비 문제 ${rTheme.bad.length}${rTheme.bad.length ? ' / ' + rTheme.bad.slice(0, 4).join(' | ') : ''}, 이름 없음 ${missTheme.length}`)
+  // 블록을 고른 채 글꼴 타일에서 방향키: 글꼴만 바뀌고 블록은 그대로
+  await page.locator('.ub-canvas .ub-item[data-type="kpi"]').first().click()
+  const kpiBefore = (await items(page)).find((i) => i.type === 'kpi')
+  await page.locator('.ub-right [role="tab"]', { hasText: '테마' }).click()
+  await page.locator('.ub-fonts [role="radio"][aria-checked="true"]').focus()
+  await page.keyboard.press('ArrowRight')
+  await page.waitForTimeout(300)
+  const kpiAfter = (await items(page)).find((i) => i.id === kpiBefore.id)
+  const picked = await page.locator('.ub-fonts [role="radio"][aria-checked="true"]').textContent()
+  check(kpiAfter.x === kpiBefore.x && kpiAfter.y === kpiBefore.y && picked.includes('도현'), '8 글꼴 타일 방향키는 블록을 옮기지 않음', `${kpiBefore.x},${kpiBefore.y} → ${kpiAfter.x},${kpiAfter.y}, 고른 글꼴 ${picked}`)
+  await page.locator('.ub-right [role="tab"]').first().click()
+
   // 대비·이름: 블록 견본(라이트·다크 블록 테마)
   for (const t of ['light', 'dark']) {
     await page.goto(`${BASE}#/blocks${t === 'dark' ? '?theme=dark' : ''}`)

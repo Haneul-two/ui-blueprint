@@ -5,7 +5,8 @@
 ## 현재 상태 (2026-11-04)
 - 하위 프로젝트 3개(블록 라이브러리, 배치 편집기, 저장·공유·내보내기) 1차 완성. 공개 배포됨: https://haneul-two.github.io/ui-blueprint/ (main에 push하면 GitHub Actions가 테스트 후 자동 배포).
 - 2026-11-04 2차 개편: 첫 화면 남색 청사진 히어로(움직이는 격자·빛, 블록 조립 연출), 편집기·견본 청사진 스타일, 아트보드 종류를 바꾸면 블록을 새 폭에 맞춰 다시 배치(`src/model/reflow.ts`).
-- 단위 테스트 204개, e2e 46개 통과. Codex 교차 리뷰 2회 반영(2차 개편).
+- 테마: 글꼴 12종(`src/app/fonts.ts`, 고른 글꼴 CSS만 그때 불러옴), 바탕색·카드 면 색·바탕 무늬(점·격자·빛) 조절, 대비 모자라면 경고.
+- 단위 테스트 213개, e2e 49개 통과. Codex 교차 리뷰 2회 반영(2차 개편).
 - 알려진 한계: 블록 48개 회귀 설계는 태블릿·휴대폰 전환 시 최대 높이(8000px)를 넘어 전환이 거부된다.
 - 알려진 한계: 속성 패널 입력 직후 400ms 안에 탭을 닫으면 그 입력은 저장 안 됨(docs/HISTORY.md).
 
@@ -34,4 +35,8 @@
 - 공개물에 절대 경로·회사명 금지. 금지어 목록은 `scripts/forbidden.local.txt`(git 제외).
 - 키트 리셋(`all: revert`)이 figure·button 같은 태그의 box-sizing을 content-box로 돌린다. 이 사이트 블록(`bk-*`)은 `blocks.css`에서 border-box로 고정했다. 빼면 폭 100% + 안쪽 여백 카드가 상자보다 넓어진다(후기 카드 +40px).
 - 블록이 좁은 폭에서 배치를 바꿀 때는 `@container`를 쓴다(컨테이너는 `.ub-item`). 창 폭(@media)이 아니라 블록 폭이 기준이어야 휴대폰 아트보드에서 맞는다.
-- 외부 웹 글꼴 CSS는 교차 출처라 html-to-image가 읽지 못해 콘솔 오류를 낸다. PNG는 `skipFonts`로 시스템 글꼴로 찍는다.
+- 글꼴은 npm(@fontsource, pretendard)으로 사이트에 함께 싣는다. 외부 글꼴 CSS는 교차 출처라 html-to-image가 못 읽어 콘솔 오류가 났다.
+- PNG에 글꼴을 심을 때는 html-to-image 기본 동작(페이지의 모든 @font-face)을 쓰지 않는다. 한글 글꼴은 글자 범위별 파일이 수백 개라 매우 느리다. `src/io/png.ts`가 테마 글꼴 중 화면에 쓰인 글자 범위 파일만 골라 `fontEmbedCSS`로 넘긴다.
+- 새 글꼴은 `src/app/fonts.ts` FONTS에 한 줄(id·이름·묶음·family·face·load)을 더하면 조절판·검사기·AI 사양서·PNG가 따라온다. id는 저장 파일에 남으니 바꾸지 않는다.
+- 조절판의 버튼 묶음은 role="radiogroup" + `radioKeys`(방향키로 선택지 이동)로 만든다. 편집기는 방향키로 블록을 옮기므로, 묶음 안 방향키가 새면 블록이 움직인다.
+- 밝기(라이트·다크)가 바뀌는 면에는 색 전환(transition) 효과를 넣지 않는다. 중간색이 대비 검사에 걸린다.

@@ -9,8 +9,10 @@ import type { Design, Item } from '../model/types'
 import { buildAiSpec } from '../io/aiSpec'
 import { download, exportJson, safeFileName } from '../io/file'
 import { artboardPng } from '../io/png'
+import { ensureFont, fontOf } from '../app/fonts'
 import { shareUrl } from '../io/share'
 import { Icon } from '../ui/Icon'
+import { radioKeys } from '../ui/radioKeys'
 import { Toaster, useToasts } from '../ui/toast'
 import { go } from '../app/router'
 import { Artboard } from '../app/Artboard'
@@ -23,7 +25,8 @@ import * as ops from './ops'
 import type { Rect } from './snapping'
 
 const isTyping = (t: EventTarget | null) =>
-  t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || !!t.closest('.ub-live'))
+  t instanceof HTMLElement &&
+  (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || !!t.closest('.ub-live, [role="radiogroup"], [role="tablist"]'))
 
 function useNarrow() {
   const q = '(max-width: 899px)'
@@ -58,6 +61,15 @@ export function Editor({ initial }: { initial: Design }) {
   // 처음 연 내용을 저장된 것으로 본다. 안 그러면 고치지 않은 탭이 400ms 뒤 다시 저장해 다른 탭의 변경을 덮는다.
   const lastSaved = useRef<string>(JSON.stringify(initial))
   const exportGen = useRef(0)
+  const menu = useRef<HTMLDetailsElement>(null)
+  // 내보내기 메뉴 바깥을 누르면 닫는다.
+  useEffect(() => {
+    const on = (e: PointerEvent) => {
+      if (menu.current?.open && !menu.current.contains(e.target as Node)) menu.current.removeAttribute('open')
+    }
+    document.addEventListener('pointerdown', on)
+    return () => document.removeEventListener('pointerdown', on)
+  }, [])
 
   const apply = useCallback((fn: (d: Design) => Design, key?: string) => dispatch({ type: 'apply', fn, key }), [])
 
@@ -198,10 +210,11 @@ export function Editor({ initial }: { initial: Design }) {
     const g = ++exportGen.current
     setExporting(true)
     try {
-      // 정지 모드로 다시 그려질 때까지 두 프레임 기다린다.
+      // 테마 글꼴 CSS가 아직 안 왔으면 기다린다(안 기다리면 PNG에 글꼴이 빠진다). 그다음 정지 모드로 다시 그려질 때까지 두 프레임.
+      await ensureFont(design.theme.font)
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
       if (!artEl.current) throw new Error('아트보드를 찾지 못했습니다.')
-      const blob = await artboardPng(artEl.current)
+      const blob = await artboardPng(artEl.current, fontOf(design.theme.font).face)
       if (g !== exportGen.current) return
       download(`${safeFileName(design.name)}.png`, blob)
       notify('PNG를 내려받았습니다.')
@@ -273,7 +286,7 @@ export function Editor({ initial }: { initial: Design }) {
             <Icon name="grid" size={16} />
           </button>
         </div>
-        <div className="ub-seg ub-toolbar__mode" role="radiogroup" aria-label="모드">
+        <div className="ub-seg ub-toolbar__mode" role="radiogroup" onKeyDown={radioKeys} aria-label="모드">
           <button type="button" role="radio" aria-checked={mode === 'edit'} onClick={() => setMode('edit')}>
             <Icon name="pointer" size={14} /> 편집
           </button>
@@ -293,11 +306,12 @@ export function Editor({ initial }: { initial: Design }) {
           <button type="button" className="ub-btn" onClick={doShare}>
             <Icon name="share" size={14} /> 공유 링크
           </button>
-          <details className="ub-menu">
+          <details className="ub-menu" ref={menu}>
             <summary className="ub-btn ub-btn--primary">
               <Icon name="download" size={14} /> 내보내기
             </summary>
-            <div className="ub-menu__list" role="group" aria-label="내보내기">
+            {/* 항목을 고르면 메뉴를 닫는다. 열어 두면 오른쪽 패널 탭을 가린다. */}
+            <div className="ub-menu__list" role="group" aria-label="내보내기" onClick={(e) => (e.target as HTMLElement).closest('button') && menu.current?.removeAttribute('open')}>
               <button type="button" disabled={exporting} onClick={doPng}>
                 <Icon name={exporting ? 'loader' : 'image'} size={14} /> {exporting ? '만드는 중…' : 'PNG 이미지'}
               </button>

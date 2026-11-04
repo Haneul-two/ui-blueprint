@@ -456,3 +456,15 @@
   .bk-bento__tile strong { font-size: 15px; }
   .bk-bento__tile p { font-size: 13px; }
 }
+
+/* 바탕 무늬(테마). 바탕색(--ss-canvas)은 그대로 두고 그 위에 무늬만 얹는다. */
+.ub-art[data-pattern="dots"] { background-image: radial-gradient(color-mix(in srgb, var(--ss-text-strong) 16%, transparent) 1.2px, transparent 1.6px); background-size: 20px 20px; }
+.ub-art[data-pattern="grid"] {
+  background-image: linear-gradient(color-mix(in srgb, var(--ss-text-strong) 7%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ss-text-strong) 7%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.ub-art[data-pattern="glow"] {
+  background-image:
+    radial-gradient(ellipse 70% 45% at 50% 0%, color-mix(in srgb, var(--ss-accent) 20%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, color-mix(in srgb, var(--ss-accent) 10%, transparent), transparent 70%);
+}
