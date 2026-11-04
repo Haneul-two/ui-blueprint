@@ -138,7 +138,7 @@ export function Inspector({ design, selection, onItem, onProp, onArtboard, onRen
             ))}
           </div>
           <small>
-            폭 {design.artboard.w}px. 바꾸면 넘치는 블록을 새 폭 안으로 들입니다.
+            폭 {design.artboard.w}px. 바꾸면 블록을 새 폭에 맞춰 다시 배치합니다.
           </small>
         </div>
         <NumberInput label={`높이 (최소 ${minH})`} value={design.artboard.h} min={minH} max={CONFIG.artboardMaxH} step={CONFIG.grid} onCommit={(h) => onArtboard({ h })} />

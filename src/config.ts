@@ -19,6 +19,8 @@ export const CONFIG = {
   dragThreshold: 3, // 이 거리를 넘게 움직여야 끌기 시작 (조절)
   snapDistance: 6, // 안내선에 붙는 거리(px, 화면 기준) (조절)
   addOffset: 24, // 클릭 추가 시 겹치면 비켜 놓는 거리 (조절)
+  // 아트보드 종류를 바꿀 때 다시 배치: 블록 사이 간격, 좌우 여백, 이 폭보다 좁으면 한두 줄로 쌓기 (조절)
+  reflow: { gap: 16, pad: { desktop: 32, tablet: 24, phone: 16 }, narrowBelow: 600 },
   limits: { items: 500, string: 2000, list: 50, name: 80 },
 } as const
 

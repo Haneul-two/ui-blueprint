@@ -43,15 +43,6 @@ export function minArtboardH(d: Design): number {
   return d.items.reduce<number>((m, it) => Math.max(m, it.y + it.h), CONFIG.artboardMinH)
 }
 
-/** 아트보드 폭이 바뀌면 블록을 새 폭 안으로 들인다. */
-export function fitItemsToWidth(items: Item[], w: number): Item[] {
-  return items.map((it) => {
-    const nw = Math.min(it.w, w)
-    const nx = Math.max(0, Math.min(it.x, w - nw))
-    return nw === it.w && nx === it.x ? it : { ...it, w: nw, x: nx }
-  })
-}
-
 /** 클릭 추가 위치: 기준점에 놓되, 같은 좌표에 블록이 있으면 비켜 놓는다. */
 export function placeNear(items: Item[], x: number, y: number): { x: number; y: number } {
   let px = snap(x)

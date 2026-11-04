@@ -31,6 +31,10 @@
 .ub-art .ss-avatar__initial { color: #16181f; }
 .ub-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+/* 키트의 태그 초기화(figure·button 등에 all: revert)가 box-sizing을 브라우저 기본(content-box)으로 돌려,
+   폭 100% + 안쪽 여백인 블록이 상자보다 넓어졌다(후기 카드 +40px). 이 사이트 블록은 border-box로 고정한다. */
+.ub-art :is([class^="bk-"], [class*=" bk-"]) { box-sizing: border-box; }
+
 /* 공통 조각 */
 .bk-fill { width: 100%; height: 100%; }
 .bk-card {
@@ -301,11 +305,16 @@
 .bk-feature p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--bk-body); flex: 1; }
 .bk-feature a { font-size: 14px; font-weight: 600; color: var(--ss-accent-text); text-decoration: none; }
 .bk-feature__icon { width: 40px; height: 40px; border-radius: var(--bk-r-sm); display: grid; place-items: center; background: var(--ss-accent-soft); color: var(--ss-accent-text); }
-.bk-pricing { height: 100%; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+.bk-pricing { height: 100%; display: flex; flex-direction: column; gap: 16px; align-items: center; container-type: inline-size; }
 .bk-pricing__switch { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--ss-ink-2); }
 .bk-pricing__switch button { border: 0; background: none; font: inherit; font-size: 13px; padding: 7px 14px; border-radius: 999px; color: var(--bk-body); cursor: pointer; }
 .bk-pricing__switch button[aria-checked="true"] { background: var(--ss-surface); color: var(--ss-text-strong); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 .bk-pricing__grid { flex: 1; width: 100%; display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: var(--bk-gap); min-height: 0; }
+/* 좁은 폭(휴대폰): 요금제를 옆으로 넘겨 본다 */
+@container (max-width: 560px) {
+  .bk-pricing__grid { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 82%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+  .bk-pricing__grid > .bk-plan { scroll-snap-align: start; }
+}
 .bk-plan { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 24px; background: var(--ss-surface); border-radius: var(--bk-r); box-shadow: var(--ss-shadow-window); }
 .bk-plan[data-pick] { box-shadow: 0 0 0 2px var(--ss-accent), var(--ss-shadow-window); }
 .bk-plan > .bk-badge { position: absolute; top: 20px; right: 20px; }
@@ -430,4 +439,20 @@
 .ub-art[data-still] .bk-type__caret { display: none; }
 @media (prefers-reduced-motion: reduce) {
   .ub-art *, .ub-art *::before, .ub-art *::after { animation: none !important; transition: none !important; }
+}
+
+/* 좁은 블록(휴대폰 폭): 블록 폭 기준으로 배치를 바꾼다. 컨테이너는 .ub-item */
+@container (max-width: 560px) {
+  .bk-nav { gap: 12px; padding: 0 16px; }
+  .bk-nav__brand { white-space: nowrap; }
+  .bk-nav__links, .bk-nav__search { display: none; }
+  .bk-nav > .bk-btn { margin-left: auto; }
+  .bk-hero { grid-template-columns: 1fr; padding: 32px 24px; gap: 24px; align-content: center; }
+  .bk-hero__art { display: none; }
+  .bk-hero p { font-size: 16px; }
+  .bk-footer { flex-wrap: wrap; gap: 20px 32px; padding: 24px; overflow: hidden; }
+  .bk-footer__brand { flex-basis: 100%; }
+  .bk-bento, .bk-bento[data-n="5"], .bk-bento[data-n="6"] { grid-template-columns: 1fr 1fr; }
+  .bk-bento__tile strong { font-size: 15px; }
+  .bk-bento__tile p { font-size: 13px; }
 }

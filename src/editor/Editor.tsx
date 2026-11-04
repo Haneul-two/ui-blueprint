@@ -419,7 +419,13 @@ export function Editor({ initial }: { initial: Design }) {
             selection={selection}
             onItem={(id, patch) => apply((d) => ops.patchItem(d, id, patch))}
             onProp={(id, key, v) => apply((d) => ops.setProp(d, id, key, v))}
-            onArtboard={(patch) => apply((d) => ops.setArtboard(d, patch))}
+            onArtboard={(patch) => {
+              const kind = patch.kind && patch.kind !== design.artboard.kind ? patch.kind : null
+              if (kind && ops.setArtboard(design, patch).artboard.kind !== kind)
+                return notify(`블록이 많아 높이 ${CONFIG.artboardMaxH}px 안에 ${CONFIG.artboards[kind].label} 폭으로 다시 놓을 수 없습니다. 블록을 줄인 뒤 바꿔 주세요.`, 'error')
+              apply((d) => ops.setArtboard(d, patch))
+              if (kind && design.items.length) notify(`${CONFIG.artboards[kind].label} 폭에 맞춰 블록을 다시 배치했습니다. Ctrl+Z로 되돌릴 수 있습니다.`)
+            }}
             onRename={(name) => apply((d) => ({ ...d, name }))}
             actions={actions}
           />

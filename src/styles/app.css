@@ -71,50 +71,10 @@ a { color: var(--accent-text); }
 /* 아트보드 겉 상자(모든 화면 공통) */
 .ub-art.ss-stage { position: relative; transform-origin: 0 0; background: var(--ss-canvas); overflow: hidden; user-select: none; }
 .ub-art.ub-live { user-select: text; }
-.ub-item { position: absolute; }
+.ub-item { position: absolute; container-type: inline-size; } /* 블록이 자기 폭에 맞춰 배치를 바꾸게(@container) */
 .ub-item__content { width: 100%; height: 100%; }
 .ub-item__content > * { max-width: 100%; }
 .ub-unknown { width: 100%; height: 100%; display: grid; place-items: center; padding: 8px; text-align: center; border: 1.5px dashed #b42318; color: #b42318; font-size: 13px; background: rgba(180, 35, 24, 0.05); border-radius: 8px; }
-
-/* 목록(첫 화면) */
-.ub-home { max-width: 1120px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-direction: column; gap: 40px; }
-.ub-home__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; }
-.ub-home__title { display: flex; gap: 16px; align-items: center; }
-.ub-logo { width: 48px; height: 48px; border-radius: 12px; background:
-  linear-gradient(var(--on-accent), var(--on-accent)) 12px 14px / 24px 3px no-repeat,
-  linear-gradient(var(--on-accent), var(--on-accent)) 12px 22px / 14px 3px no-repeat,
-  linear-gradient(var(--on-accent), var(--on-accent)) 12px 30px / 19px 3px no-repeat, var(--accent); flex: none; }
-.ub-home h1 { margin: 0; font-size: 28px; letter-spacing: -0.02em; }
-.ub-home__title p { margin: 4px 0 0; color: var(--muted); max-width: 52ch; }
-.ub-home__nav { display: flex; gap: 8px; flex-wrap: wrap; }
-.ub-home h2 { font-size: 16px; margin: 0 0 14px; display: flex; align-items: center; gap: 8px; }
-.ub-home h2 span { font-size: 12px; color: var(--muted); font-weight: 600; }
-.ub-start { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
-.ub-start__blank, .ub-start__preset {
-  display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: 12px; text-align: left;
-  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
-}
-.ub-start__blank { background-image: radial-gradient(var(--dot) 1px, transparent 1.2px); background-size: 12px 12px; }
-.ub-start__blank strong, .ub-start__preset strong { font-size: 15px; }
-.ub-start__blank small, .ub-start__preset small { color: var(--muted); font-size: 13px; }
-.ub-start__blank .ub-btn--primary { margin-top: auto; }
-.ub-start__preset { cursor: pointer; font: inherit; color: inherit; }
-.ub-start__preset:hover { border-color: var(--accent); }
-.ub-start__thumb { height: 132px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); display: block; overflow: hidden; padding: 8px; }
-.ub-start__thumb svg { width: 100%; height: 100%; }
-.ub-start__thumb rect { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 4; vector-effect: non-scaling-stroke; }
-.ub-designs { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
-.ub-designs li { display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line); }
-.ub-designs li:last-child { border-bottom: 0; }
-.ub-designs li > svg { color: var(--muted); flex: none; }
-.ub-designs__name { flex: 1; min-width: 0; display: flex; flex-direction: column; text-decoration: none; color: var(--text); }
-.ub-designs__name strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ub-designs__name small { color: var(--muted); font-size: 12px; }
-.ub-designs__name:hover strong { color: var(--accent-text); text-decoration: underline; }
-.ub-designs__rename { flex: 1; display: flex; gap: 8px; }
-.ub-designs__rename input { flex: 1; min-width: 0; border: 1px solid var(--accent); border-radius: var(--radius); padding: 6px 8px; background: var(--surface); }
-.ub-designs__actions { display: flex; gap: 2px; }
-.ub-home__foot p { margin: 0; color: var(--muted); font-size: 12px; max-width: 72ch; }
 
 /* 보기 전용·좁은 화면 */
 .ub-view { min-height: 100%; display: flex; flex-direction: column; }
@@ -147,12 +107,9 @@ a { color: var(--accent-text); }
 .ub-specimen__meta small { flex-basis: 100%; color: var(--muted); font-size: 12px; }
 
 @media (max-width: 640px) {
-  .ub-home { padding: 24px 16px 48px; gap: 32px; }
   .ub-blocks { padding: 24px 16px 48px; }
   .ub-blocks__grid { grid-template-columns: 1fr; }
   .ub-view__head { flex-wrap: wrap; }
   .ub-scaled { padding: 8px 0; }
 }
 .ub-seg button { white-space: nowrap; }
-.ub-start__blank .ub-seg { display: grid; grid-template-columns: repeat(3, 1fr); }
-.ub-start__blank .ub-seg button { justify-content: center; padding: 0 4px; }

@@ -18,7 +18,7 @@ export const dashboardPreset = (): Design =>
   make('preset-dashboard', '팀 대시보드', 'desktop', 1024, [
     ['sidebar', 0, 0, 240, 1024],
     ['section-title', 272, 32, 720, 88],
-    ['search', 1008, 56, 400, 44],
+    ['search', 1008, 56, 400, 48],
     ['kpi', 272, 144, 264, 136],
     ['kpi', 552, 144, 264, 136, { label: '새 노트', value: '1,284', delta: '+12%', spark: '3,5,4,6,8,7,10' }],
     ['kpi', 832, 144, 264, 136, { label: '공유된 노트', value: '342', delta: '-3.1%', spark: '9,8,8,7,7,6,6' }],

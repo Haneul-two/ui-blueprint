@@ -6,6 +6,8 @@ export async function artboardPng(el: HTMLElement): Promise<Blob> {
   const blob = await toBlob(el, {
     pixelRatio: CONFIG.pngScale,
     cacheBust: true,
+    // 외부 웹 글꼴(교차 출처 CSS)은 읽을 수 없어 콘솔 오류만 낸다. 글꼴은 심지 않고 시스템 글꼴로 찍는다.
+    skipFonts: true,
     width: el.offsetWidth,
     height: el.offsetHeight,
     style: { transform: 'none', margin: '0', left: '0', top: '0' },

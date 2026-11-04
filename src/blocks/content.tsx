@@ -104,7 +104,7 @@ const pricing: BlockDef = {
   category: 'content',
   icon: 'credit-card',
   size: { w: 960, h: 440 },
-  minSize: { w: 480, h: 320 },
+  minSize: { w: 320, h: 320 },
   props: [
     { key: 'plans', label: '요금제(이름|월 가격|설명|기능,기능)', kind: 'list' },
     { key: 'pick', label: '추천 요금제 순서(1부터)', kind: 'number', min: 1, max: 4 },

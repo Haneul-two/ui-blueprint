@@ -15,7 +15,18 @@
   --dot: #c3ccd9;
   --shadow: 0 1px 2px rgba(22, 33, 58, 0.06), 0 6px 20px -8px rgba(22, 33, 58, 0.18);
   --font: Pretendard, "Pretendard Variable", system-ui, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
   --radius: 8px;
+  /* 도면 잉크: 첫 화면 히어로·도구줄 같은 남색 면 (라이트·다크 공통) */
+  --ink: #0a1633;
+  --ink-2: #13254f;
+  --ink-line: rgba(160, 185, 255, 0.18);
+  --ink-text: #eef2ff;
+  --ink-muted: #b4c1e2;
+  --ink-accent: #9cb8ff;
+  /* 청사진 선 격자 */
+  --grid-minor: rgba(31, 79, 209, 0.07);
+  --grid-major: rgba(31, 79, 209, 0.14);
   color-scheme: light;
 }
 
@@ -35,6 +46,8 @@
     --danger: #ff8a80;
     --dot: #2c3647;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+    --grid-minor: rgba(138, 168, 255, 0.05);
+    --grid-major: rgba(138, 168, 255, 0.1);
     color-scheme: dark;
   }
 }
@@ -53,5 +66,7 @@
   --danger: #ff8a80;
   --dot: #2c3647;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -10px rgba(0, 0, 0, 0.6);
+  --grid-minor: rgba(138, 168, 255, 0.05);
+  --grid-major: rgba(138, 168, 255, 0.1);
   color-scheme: dark;
 }

@@ -181,6 +181,12 @@ export function Canvas({ design, mode, zoom, forceStill, selection, onSelect, on
         onDropBlock(type, p.x, p.y)
       }}
     >
+      <div className="ub-canvas__label" aria-hidden="true">
+        <b>{design.name}</b>
+        <span>
+          {art.w} × {art.h}
+        </span>
+      </div>
       <Artboard
         design={shown}
         mode={mode}

@@ -361,6 +361,32 @@ try {
   await page.waitForTimeout(300)
   const missHome = await page.evaluate(NAMES_FN)
   check(missHome.length === 0, '8 목록 화면 조작 요소 이름', missHome.slice(0, 5).join(' | '))
+  // 대비: 첫 화면(히어로는 남색 면, 아래는 제도 용지)
+  await page.waitForTimeout(1200) // 제목 등장 연출이 끝날 때까지
+  for (const scheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: scheme })
+    await page.waitForTimeout(150)
+    const r = await page.evaluate(CONTRAST_FN)
+    check(r.bad.length === 0, `7 대비 첫 화면 ${scheme}`, `검사 ${r.checked}, 제외 ${r.skipped}${r.bad.length ? ' / ' + r.bad.slice(0, 6).join(' | ') : ''}`)
+  }
+  await page.emulateMedia({ colorScheme: 'light' })
+
+  // 12 아트보드 종류 전환: 블록을 새 폭에 다시 배치(겹침 없음, 아트보드 안)
+  for (const [fx, kind] of [['dashboard', '휴대폰'], ['landing', '태블릿'], ['app', '데스크톱']]) {
+    await openFixture(page, fx, `e2e-reflow-${fx}`)
+    await page.locator('.ub-right button[role="radio"]', { hasText: kind }).click()
+    await page.waitForTimeout(300)
+    const art = await page.$eval('.ub-canvas .ub-art', (e) => ({ w: parseFloat(e.style.width), h: parseFloat(e.style.height) }))
+    const list = await items(page)
+    const outside = list.filter((i) => i.x < 0 || i.y < 0 || i.x + i.w > art.w || i.y + i.h > art.h).length
+    let overlap = 0
+    for (let a = 0; a < list.length; a++) for (let b = a + 1; b < list.length; b++) {
+      const p = list[a], q = list[b]
+      if (p.x < q.x + q.w && q.x < p.x + p.w && p.y < q.y + q.h && q.y < p.y + p.h) overlap++
+    }
+    const toast = await page.getByText('폭에 맞춰 블록을 다시 배치했습니다').count()
+    check(outside === 0 && overlap === 0 && toast === 1, `12 ${fx} → ${kind} 다시 배치`, `폭 ${art.w}, 블록 ${list.length}, 밖 ${outside}, 겹침 ${overlap}, 안내 ${toast}`)
+  }
 
   // 9 움직임 줄이기: 모션 블록이 멈춘다
   const ctx3 = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' })
@@ -374,6 +400,11 @@ try {
   await p3.waitForTimeout(1100)
   const snap2 = await p3.$$eval(motionSel, (els) => els.map((e) => e.innerHTML).join('|'))
   check(running === 0 && snap1 === snap2, '9 움직임 줄이기에서 모션 정지', `실행 중 애니메이션 ${running}, 1초 사이 변화 ${snap1 === snap2 ? '없음' : '있음'}`)
+  await p3.goto(BASE)
+  await p3.waitForTimeout(600)
+  const heroRunning = await p3.$eval('.hero', (e) => e.getAnimations({ subtree: true }).filter((a) => a.playState === 'running').length)
+  const titleShown = await p3.$eval('.hero__title', (e) => getComputedStyle(e.querySelector('.wr-word > span')).opacity)
+  check(heroRunning === 0 && titleShown === '1', '9 움직임 줄이기에서 첫 화면 연출 정지', `실행 중 애니메이션 ${heroRunning}, 제목 불투명도 ${titleShown}`)
   await ctx3.close()
 
   // 6 좁은 화면 390×844: 목록·보기 가로 넘침 없음, 편집기는 안내

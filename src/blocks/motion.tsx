@@ -60,7 +60,8 @@ const textEffect: BlockDef = {
     const text = asStr(props.text)
     const effect = asStr(props.effect, 'split')
     const [replay, setReplay] = useState(0)
-    const style = { fontSize: asNum(props.size, 56) } as CSSProperties
+    // 블록 폭이 좁으면 글자를 줄인다(12cqw = 블록 폭의 12%). 넓을 때는 정한 크기 그대로.
+    const style = { fontSize: `min(${asNum(props.size, 56)}px, 12cqw)` } as CSSProperties
     let body
     if (effect === 'type') body = <Typewriter text={text.replace(/\n/g, ' ')} still={still} />
     else if (effect === 'flip') body = <Flip words={text.split('\n').filter(Boolean)} still={still} />

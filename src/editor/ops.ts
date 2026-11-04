@@ -1,6 +1,7 @@
 import { CONFIG, type ArtboardKind } from '../config'
 import { defaultProps, getBlock } from '../blocks/registry'
-import { clampItem, fitItemsToWidth, minArtboardH, placeNear, snap, uid } from '../model/design'
+import { clampItem, minArtboardH, placeNear, snap, uid } from '../model/design'
+import { reflowDesign } from '../model/reflow'
 import type { Design, Item, PropValue } from '../model/types'
 import type { Rect } from './snapping'
 
@@ -88,10 +89,10 @@ export function shift(d: Design, id: string, dir: 1 | -1): Design {
 export function setArtboard(d: Design, patch: Partial<{ kind: ArtboardKind; h: number }>): Design {
   let next = d
   if (patch.kind && patch.kind !== d.artboard.kind) {
-    const a = CONFIG.artboards[patch.kind]
-    const items = fitItemsToWidth(d.items, a.w)
-    next = { ...d, artboard: { kind: patch.kind, w: a.w, h: d.artboard.h }, items }
-    next = { ...next, artboard: { ...next.artboard, h: Math.max(minArtboardH(next), Math.min(CONFIG.artboardMaxH, d.artboard.h)) } }
+    // 최대 높이 안에 다시 놓을 수 없으면 바꾸지 않는다(부르는 쪽이 종류가 그대로인지 보고 알린다).
+    const r = reflowDesign(d, patch.kind, minOf)
+    if (!r) return d
+    next = r
   }
   if (patch.h !== undefined) {
     const h = Math.max(minArtboardH(next), Math.min(CONFIG.artboardMaxH, snap(patch.h)))
